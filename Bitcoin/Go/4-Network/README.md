@@ -77,12 +77,12 @@
 
 操作方式
 -----
-首先，在第一个终端窗口中将 NODE_ID 设置为 3000（export NODE_ID=3000）。为了让你知道什么节点执行什么操作，我会使用像 NODE 3000 或 NODE 3001 进行标识。
+首先，在第一个终端窗口中将 NODE_ID 设置为 3000（set NODE_ID=3000）。为了让你知道什么节点执行什么操作，我会使用像 NODE 3000 或 NODE 3001 进行标识。
 NODE 3000
 
 创建一个钱包和一个新的区块链：
 
-$ test.exe createblockchain -address CENTREAL_NODE
+$ test.exe createblockchain -address %CENTREAL_NODE%
 
 （为了简洁起见，我会使用假地址。）
 
@@ -92,14 +92,14 @@ $ cp blockchain_3000.db blockchain_genesis.db
 
 NODE 3001
 
-接下来，打开一个新的终端窗口，将 node ID 设置为 3001。这会作为一个钱包节点。通过 blockchain_go createwallet 生成一些地址，我们把这些地址叫做 WALLET_1, WALLET_2, WALLET_3、WALLET_4.
+接下来，打开一个新的终端窗口，将 node ID 设置为 3001。这会作为一个钱包节点。通过 test.exe createwallet 生成一些地址，我们把这些地址叫做 WALLET_1, WALLET_2, WALLET_3、WALLET_4.
 
 NODE 3000
 
 向钱包地址发送一些币：
 
-$ test.exe send -from CENTREAL_NODE -to WALLET_1 -amount 10 -mine
-$ test.exe send -from CENTREAL_NODE -to WALLET_2 -amount 10 -mine
+$ test.exe send -from %CENTREAL_NODE% -to %WALLET_1% -amount 10 -mine
+$ test.exe send -from %CENTREAL_NODE% -to %WALLET_2% -amount 10 -mine
 
 -mine 标志指的是块会立刻被同一节点挖出来。我们必须要有这个标志，因为初始状态时，网络中没有矿工节点。
 
@@ -120,15 +120,15 @@ $ test.exe startnode
 
 它会从中心节点下载所有区块。为了检查一切正常，暂停节点运行并检查余额：
 
-$ test.exe getbalance -address WALLET_1
+$ test.exe getbalance -address %WALLET_1%
 Balance of 'WALLET_1': 10
 
-$ test.exe getbalance -address WALLET_2
+$ test.exe getbalance -address %WALLET_2%
 Balance of 'WALLET_2': 10
 
 你还可以检查 CENTRAL_NODE 地址的余额，因为 node 3001 现在有它自己的区块链：
 
-$ test.exe getbalance -address CENTRAL_NODE
+$ test.exe getbalance -address %CENTRAL_NODE%
 Balance of 'CENTRAL_NODE': 10
 
 NODE 3002
@@ -139,14 +139,14 @@ $ cp blockchain_genesis.db blockchain_3002.db
 
 启动节点：
 
-$ test.exe startnode -miner MINER_WALLET
+$ test.exe startnode -miner %MINER_WALLET%
 
 NODE 3001
 
 发送一些币：
 
-$ test.exe send -from WALLET_1 -to WALLET_3 -amount 1
-$ test.exe send -from WALLET_2 -to WALLET_4 -amount 1
+$ test.exe send -from %WALLET_1% -to %WALLET_3% -amount 1
+$ test.exe send -from %WALLET_2% -to %WALLET_4% -amount 1
 
 NODE 3002
 
@@ -155,23 +155,23 @@ NODE 3001
 
 切换到钱包节点并启动：
 
-$ blockchain_go startnode
+$ test.exe startnode
 
 它会下载最近挖出来的块！
 
 暂停节点并检查余额：
 
-$ test.exe getbalance -address WALLET_1
+$ test.exe getbalance -address %WALLET_1%
 Balance of 'WALLET_1': 9
 
-$ test.exe getbalance -address WALLET_2
+$ test.exe getbalance -address %WALLET_2%
 Balance of 'WALLET_2': 9
 
-$ test.exe getbalance -address WALLET_3
+$ test.exe getbalance -address %WALLET_3%
 Balance of 'WALLET_3': 1
 
-$ test.exe getbalance -address WALLET_4
+$ test.exe getbalance -address %WALLET_4%
 Balance of 'WALLET_4': 1
 
-$ test.exe getbalance -address MINER_WALLET
+$ test.exe getbalance -address %MINER_WALLET%
 Balance of 'MINER_WALLET': 10

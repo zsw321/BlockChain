@@ -2,11 +2,11 @@
 
 不过在我们目前的实现中，无法做到完全的去中心化，因为会出现中心化的特点。我们会有三个节点：
 
-    一个中心节点。所有其他节点都会连接到这个节点，这个节点会在其他节点之间发送数据。
+   * 一个中心节点。所有其他节点都会连接到这个节点，这个节点会在其他节点之间发送数据。
 
-    一个矿工节点。这个节点会在内存池中存储新的交易，当有足够的交易时，它就会打包挖出一个新块。
+   * 一个矿工节点。这个节点会在内存池中存储新的交易，当有足够的交易时，它就会打包挖出一个新块。
 
-    一个钱包节点。这个节点会被用作在钱包之间发送币。但是与 SPV 节点不同，它存储了区块链的一个完整副本。
+   * 一个钱包节点。这个节点会被用作在钱包之间发送币。但是与 SPV 节点不同，它存储了区块链的一个完整副本。
 
 场景
 
@@ -34,3 +34,102 @@
 
 2、奖励（reward）。现在挖矿虽然有奖励，但是固定的，而且给发送者，并不是给矿工，同时也没有交易费。
 
+
+操作方式
+首先，在第一个终端窗口中将 NODE_ID 设置为 3000（export NODE_ID=3000）。为了让你知道什么节点执行什么操作，我会使用像 NODE 3000 或 NODE 3001 进行标识。
+NODE 3000
+
+创建一个钱包和一个新的区块链：
+
+$ blockchain_go createblockchain -address CENTREAL_NODE
+
+（为了简洁起见，我会使用假地址。）
+
+然后，会生成一个仅包含创世块的区块链。我们需要保存块，并在其他节点使用。创世块承担了一条链标识符的角色（在 Bitcoin Core 中，创世块是硬编码的）
+
+$ cp blockchain_3000.db blockchain_genesis.db 
+
+NODE 3001
+
+接下来，打开一个新的终端窗口，将 node ID 设置为 3001。这会作为一个钱包节点。通过 blockchain_go createwallet 生成一些地址，我们把这些地址叫做 WALLET_1, WALLET_2, WALLET_3.
+NODE 3000
+
+向钱包地址发送一些币：
+
+$ blockchain_go send -from CENTREAL_NODE -to WALLET_1 -amount 10 -mine
+$ blockchain_go send -from CENTREAL_NODE -to WALLET_2 -amount 10 -mine
+
+-mine 标志指的是块会立刻被同一节点挖出来。我们必须要有这个标志，因为初始状态时，网络中没有矿工节点。
+
+启动节点：
+
+$ blockchain_go startnode
+
+这个节点会持续运行，直到本文定义的场景结束。
+NODE 3001
+
+启动上面保存创世块节点的区块链：
+
+$ cp blockchain_genesis.db blockchain_3001.db
+
+运行节点：
+
+$ blockchain_go startnode
+
+它会从中心节点下载所有区块。为了检查一切正常，暂停节点运行并检查余额：
+
+$ blockchain_go getbalance -address WALLET_1
+Balance of 'WALLET_1': 10
+
+$ blockchain_go getbalance -address WALLET_2
+Balance of 'WALLET_2': 10
+
+你还可以检查 CENTRAL_NODE 地址的余额，因为 node 3001 现在有它自己的区块链：
+
+$ blockchain_go getbalance -address CENTRAL_NODE
+Balance of 'CENTRAL_NODE': 10
+
+NODE 3002
+
+打开一个新的终端窗口，将它的 ID 设置为 3002，然后生成一个钱包。这会是一个矿工节点。初始化区块链：
+
+$ cp blockchain_genesis.db blockchain_3002.db
+
+启动节点：
+
+$ blockchain_go startnode -miner MINER_WALLET
+
+NODE 3001
+
+发送一些币：
+
+$ blockchain_go send -from WALLET_1 -to WALLET_3 -amount 1
+$ blockchain_go send -from WALLET_2 -to WALLET_4 -amount 1
+
+NODE 3002
+
+迅速切换到矿工节点，你会看到挖出了一个新块！同时，检查中心节点的输出。
+NODE 3001
+
+切换到钱包节点并启动：
+
+$ blockchain_go startnode
+
+它会下载最近挖出来的块！
+
+暂停节点并检查余额：
+
+$ blockchain_go getbalance -address WALLET_1
+Balance of 'WALLET_1': 9
+
+$ blockchain_go getbalance -address WALLET_2
+Balance of 'WALLET_2': 9
+
+$ blockchain_go getbalance -address WALLET_3
+Balance of 'WALLET_3': 1
+
+$ blockchain_go getbalance -address WALLET_4
+Balance of 'WALLET_4': 1
+
+$ blockchain_go getbalance -address MINER_WALLET
+Balance of 'MINER_WALLET': 10

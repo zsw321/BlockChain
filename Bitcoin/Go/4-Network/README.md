@@ -32,7 +32,7 @@
    14-2、矿工节点同步区块，同时将矿工节点地址添加进knowNodes（[]strings{localhost:3000,localhost:3001,localhost:3002}）    
    16、接收到钱包节点（localhost:3001）的连接，对消息进行解析，处理tx消息，从消息中取出序列化后交易并反序列化，保存进交易池中（map[string]Transactionyins 映射结构），对knowNodes切片进行遍历，如切片的值不是本地地址（localhost:3000）和消息来源地址（localhost:3001）,则向其（只剩下localhost:3002）发送inv消息（包含当前节点地址localhost:3000、kind为tx、交易ID），等待其他节点连接；  
    18、接收到挖矿节点（localhost:3002）的连接，对消息进行解析，处理getdata消息，取出消息中的交易ID，从交易池中取出交易ID对应的交易信息，给挖矿节点（localhost:3002）发送tx消息（包含当前节点地址localhost:3000、交易序列化）,等待其他节点连接；  
-   21、接收到钱包节点（localhost:3001）的连接，对消息进行解析，处理tx消息，从消息中取出序列化后交易并反序列化，保存进交易池中（map[string]Transactionyins 映射结构），重复不止步骤16-18，等待其他节点连接；
+   21、接收到钱包节点（localhost:3001）的连接，对消息进行解析，处理tx消息，从消息中取出序列化后交易并反序列化，保存进交易池中（map[string]Transactionyins 映射结构），重复不止步骤16-18，等待其他节点连接；  
    23、接收到挖矿节点（localhost:3002）的连接，对消息进行解析，处理inv消息，从消息中取出区块哈希，向挖矿节点发送getdata消息（包含当前节点地址localhost:3000、kind为block、区块哈希），等待其他节点连接；    
    25、接收挖矿节点（localhost:3002）的连接，对消息进行解析，处理block消息，从消息中取出区块序列化数据，并反序列化，添加到本地数据库中，并更新本地UTXO集索引，等待其他节点连接；  
    

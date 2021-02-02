@@ -27,13 +27,13 @@
    3、启动节点，对本地端口3000进行监听，等待其他节点连接;  
    6、接收到钱包节点（localhost:3001）的连接，对消息进行解析，处理version消息，将当前节点保存的区块链区块高度与消息中的高度进行比较，当前节点的区块高度更大，则给钱包地址(localhost:3001)发送version消息（包含当前区块高度、当前节点地址localhost:3000）,同时将钱包地址添加进knowNodes（[]strings{localhost:3000,localhost:3001}）,等待其他节点连接；  
    8、接收到钱包节点（localhost:3001）的连接，对消息进行解析，处理getblocks消息，获取本地数据库中所有的区块哈希，则给钱包地址发送inv消息（包含当前节点地址localhost:3000、kind为block、区块哈希），等待其他节点连接；  
-   10、接收到钱包节点（localhost:3001）的连接，对消息进行解析，处理getdata消息，根据消息中的区块哈希查询本地数据库，获取区块，则给钱包地址发送block消息（包含当前节点地址localhost:3000、区块序列化数据），等待其他节点连接；
+   10、接收到钱包节点（localhost:3001）的连接，对消息进行解析，处理getdata消息，根据消息中的区块哈希查询本地数据库，获取区块，则给钱包地址发送block消息（包含当前节点地址localhost:3000、区块序列化数据），等待其他节点连接；  
    12、重复步骤10，直到区块发送完毕，等待其他节点连接；
-   14-2、矿工节点同步区块，同时将矿工节点地址添加进knowNodes（[]strings{localhost:3000,localhost:3001,localhost:3002}）  
+   14-2、矿工节点同步区块，同时将矿工节点地址添加进knowNodes（[]strings{localhost:3000,localhost:3001,localhost:3002}）    
    16、接收到钱包节点（localhost:3001）的连接，对消息进行解析，处理tx消息，从消息中取出序列化后交易并反序列化，保存进交易池中（map[string]Transactionyins 映射结构），对knowNodes切片进行遍历，如切片的值不是本地地址（localhost:3000）和消息来源地址（localhost:3001）,则向其（只剩下localhost:3002）发送inv消息（包含当前节点地址localhost:3000、kind为tx、交易ID），等待其他节点连接；  
    18、接收到挖矿节点（localhost:3002）的连接，对消息进行解析，处理getdata消息，取出消息中的交易ID，从交易池中取出交易ID对应的交易信息，给挖矿节点（localhost:3002）发送tx消息（包含当前节点地址localhost:3000、交易序列化）,等待其他节点连接；  
    21、接收到钱包节点（localhost:3001）的连接，对消息进行解析，处理tx消息，从消息中取出序列化后交易并反序列化，保存进交易池中（map[string]Transactionyins 映射结构），重复不止步骤16-18，等待其他节点连接；
-   23、接收到挖矿节点（localhost:3002）的连接，对消息进行解析，处理inv消息，从消息中取出区块哈希，向挖矿节点发送getdata消息（包含当前节点地址localhost:3000、kind为block、区块哈希），等待其他节点连接；  
+   23、接收到挖矿节点（localhost:3002）的连接，对消息进行解析，处理inv消息，从消息中取出区块哈希，向挖矿节点发送getdata消息（包含当前节点地址localhost:3000、kind为block、区块哈希），等待其他节点连接；    
    25、接收挖矿节点（localhost:3002）的连接，对消息进行解析，处理block消息，从消息中取出区块序列化数据，并反序列化，添加到本地数据库中，并更新本地UTXO集索引，等待其他节点连接；  
    
    
@@ -82,7 +82,7 @@ NODE 3000
 
 创建一个钱包和一个新的区块链：
 
-$ blockchain_go createblockchain -address CENTREAL_NODE
+$ test.exe createblockchain -address CENTREAL_NODE
 
 （为了简洁起见，我会使用假地址。）
 
@@ -98,14 +98,14 @@ NODE 3000
 
 向钱包地址发送一些币：
 
-$ blockchain_go send -from CENTREAL_NODE -to WALLET_1 -amount 10 -mine
-$ blockchain_go send -from CENTREAL_NODE -to WALLET_2 -amount 10 -mine
+$ test.exe send -from CENTREAL_NODE -to WALLET_1 -amount 10 -mine
+$ test.exe send -from CENTREAL_NODE -to WALLET_2 -amount 10 -mine
 
 -mine 标志指的是块会立刻被同一节点挖出来。我们必须要有这个标志，因为初始状态时，网络中没有矿工节点。
 
 启动节点：
 
-$ blockchain_go startnode
+$ test.exe startnode
 
 这个节点会持续运行，直到本文定义的场景结束。
 NODE 3001
@@ -116,19 +116,19 @@ $ cp blockchain_genesis.db blockchain_3001.db
 
 运行节点：
 
-$ blockchain_go startnode
+$ test.exe startnode
 
 它会从中心节点下载所有区块。为了检查一切正常，暂停节点运行并检查余额：
 
-$ blockchain_go getbalance -address WALLET_1
+$ test.exe getbalance -address WALLET_1
 Balance of 'WALLET_1': 10
 
-$ blockchain_go getbalance -address WALLET_2
+$ test.exe getbalance -address WALLET_2
 Balance of 'WALLET_2': 10
 
 你还可以检查 CENTRAL_NODE 地址的余额，因为 node 3001 现在有它自己的区块链：
 
-$ blockchain_go getbalance -address CENTRAL_NODE
+$ test.exe getbalance -address CENTRAL_NODE
 Balance of 'CENTRAL_NODE': 10
 
 NODE 3002
@@ -139,14 +139,14 @@ $ cp blockchain_genesis.db blockchain_3002.db
 
 启动节点：
 
-$ blockchain_go startnode -miner MINER_WALLET
+$ test.exe startnode -miner MINER_WALLET
 
 NODE 3001
 
 发送一些币：
 
-$ blockchain_go send -from WALLET_1 -to WALLET_3 -amount 1
-$ blockchain_go send -from WALLET_2 -to WALLET_4 -amount 1
+$ test.exe send -from WALLET_1 -to WALLET_3 -amount 1
+$ test.exe send -from WALLET_2 -to WALLET_4 -amount 1
 
 NODE 3002
 
@@ -161,17 +161,17 @@ $ blockchain_go startnode
 
 暂停节点并检查余额：
 
-$ blockchain_go getbalance -address WALLET_1
+$ test.exe getbalance -address WALLET_1
 Balance of 'WALLET_1': 9
 
-$ blockchain_go getbalance -address WALLET_2
+$ test.exe getbalance -address WALLET_2
 Balance of 'WALLET_2': 9
 
-$ blockchain_go getbalance -address WALLET_3
+$ test.exe getbalance -address WALLET_3
 Balance of 'WALLET_3': 1
 
-$ blockchain_go getbalance -address WALLET_4
+$ test.exe getbalance -address WALLET_4
 Balance of 'WALLET_4': 1
 
-$ blockchain_go getbalance -address MINER_WALLET
+$ test.exe getbalance -address MINER_WALLET
 Balance of 'MINER_WALLET': 10

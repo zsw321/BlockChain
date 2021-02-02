@@ -28,7 +28,7 @@
    6、接收到钱包节点（localhost:3001）的连接，对消息进行解析，处理version消息，将当前节点保存的区块链区块高度与消息中的高度进行比较，当前节点的区块高度更大，则给钱包地址(localhost:3001)发送version消息（包含当前区块高度、当前节点地址localhost:3000）,同时将钱包地址添加进knowNodes（[]strings{localhost:3000,localhost:3001}）,等待其他节点连接；  
    8、接收到钱包节点（localhost:3001）的连接，对消息进行解析，处理getblocks消息，获取本地数据库中所有的区块哈希，则给钱包地址发送inv消息（包含当前节点地址localhost:3000、kind为block、区块哈希），等待其他节点连接；  
    10、接收到钱包节点（localhost:3001）的连接，对消息进行解析，处理getdata消息，根据消息中的区块哈希查询本地数据库，获取区块，则给钱包地址发送block消息（包含当前节点地址localhost:3000、区块序列化数据），等待其他节点连接；  
-   12、重复步骤10，直到区块发送完毕，等待其他节点连接；
+   12、重复步骤10，直到区块发送完毕，等待其他节点连接；  
    14-2、矿工节点同步区块，同时将矿工节点地址添加进knowNodes（[]strings{localhost:3000,localhost:3001,localhost:3002}）    
    16、接收到钱包节点（localhost:3001）的连接，对消息进行解析，处理tx消息，从消息中取出序列化后交易并反序列化，保存进交易池中（map[string]Transactionyins 映射结构），对knowNodes切片进行遍历，如切片的值不是本地地址（localhost:3000）和消息来源地址（localhost:3001）,则向其（只剩下localhost:3002）发送inv消息（包含当前节点地址localhost:3000、kind为tx、交易ID），等待其他节点连接；  
    18、接收到挖矿节点（localhost:3002）的连接，对消息进行解析，处理getdata消息，取出消息中的交易ID，从交易池中取出交易ID对应的交易信息，给挖矿节点（localhost:3002）发送tx消息（包含当前节点地址localhost:3000、交易序列化）,等待其他节点连接；  

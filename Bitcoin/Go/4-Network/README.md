@@ -66,7 +66,8 @@
   
 综述所示：钱包节点与中心节点的通信如下：
 ![](https://raw.githubusercontent.com/zsw321/BlockChain/master/Bitcoin/Go/4-Network/update.png)
-
+钱包节点发送交易、挖矿节点打包交易并给中心节点发送，钱包节点跟中心节点同步
+![](https://raw.githubusercontent.com/zsw321/BlockChain/master/Bitcoin/Go/4-Network/tx.png)
 
 这就是比特币中的一般流程。尽管我们不会实现一个真实的 P2P 网络，但是我们会实现一个真实，也是比特币最常见最重要的用户场景。
 

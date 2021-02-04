@@ -1,7 +1,7 @@
 通过Go语言实现比特币相关技术知识点  
 1、Transaction 实现了交易功能；  
 2、Address 增加了钱包地址功能；  
-3、UTXO  增加了UTXO集功能；
+3、UTXO  增加了UTXO集功能；  
 4、Network 简单实现了网络通信功能；  
 
 参考文献

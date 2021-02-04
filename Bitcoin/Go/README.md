@@ -7,3 +7,4 @@
 [3.《精通比特币第二版》](https://book.8btc.com/books/6/masterbitcoin2cn/_book/trans-preface.html)  
 [4.Bitcoin Developer Documentation](https://developer.bitcoin.org/)  
 [5.bitcoin wiki](https://en.bitcoin.it/wiki/Main_Page)  
+[6.小白学习区块链](https://www.jianshu.com/c/6277257ba30a)

@@ -65,7 +65,7 @@
    * 钱包节点的用户检查他们的支付是否成功。
   
 综述所示：钱包节点与中心节点的通信如下：
-![](https://raw.githubusercontent.com/zsw321/BlockChain/master/Bitcoin/Go/4-Network/update.png)
+![](https://raw.githubusercontent.com/zsw321/BlockChain/master/Bitcoin/Go/4-Network/update.png)  
 钱包节点发送交易、挖矿节点打包交易并给中心节点发送，钱包节点跟中心节点同步  
 ![](https://raw.githubusercontent.com/zsw321/BlockChain/master/Bitcoin/Go/4-Network/tx.png)
 
